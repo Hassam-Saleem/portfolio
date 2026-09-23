@@ -9,7 +9,7 @@ refused nor spend free-tier quota.
 
 Built for the HireStella *AI Developer Intern* assessment. Free tiers only, keys server-side.
 
-- **Live URL:** _add after deploying_
+- **Live URL:** https://talk-to-hassam.vercel.app/
 - **Stack:** Next.js 16 (App Router) · Tailwind 4 · Supabase Postgres + pgvector · NVIDIA NIM (embeddings + chat) · Vercel Hobby
 
 ## How it works
