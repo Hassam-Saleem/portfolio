@@ -1,0 +1,24 @@
+node_modules/
+.next/
+out/
+.vercel/
+next-env.d.ts
+*.tsbuildinfo
+
+# secrets — never commit
+.env
+.env.*
+!.env.example
+
+# generated files that come back on their own
+AGENTS.md
+CLAUDE.md
+eval/last-results.json
+.claude/
+
+# assessment inputs (kept locally, not part of the deliverable)
+HireStella_*.pdf
+hassam_rag_dataset.zip
+dataset_extracted/
+
+.DS_Store
