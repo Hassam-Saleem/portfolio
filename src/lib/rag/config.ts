@@ -53,6 +53,14 @@ const RESERVES: {
   headers?: Record<string, string>;
 }[] = [
   {
+    id: "groq",
+    keyEnv: "GROQ_API_KEY",
+    modelEnv: "GROQ_MODEL",
+    model: "openai/gpt-oss-120b",
+    baseUrl: "https://api.groq.com/openai/v1",
+    extra: { reasoning_effort: "low" },
+  },
+  {
     id: "gemini",
     keyEnv: "GEMINI_API_KEY",
     modelEnv: "GEMINI_MODEL",

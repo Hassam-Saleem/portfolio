@@ -35,7 +35,7 @@ retrieval input.
 | **Chunking** | Markdown-aware: split at `##`/`###`, pack neighbours up to ~700 chars, split long sections at paragraph/list boundaries with one block overlap; every chunk starts with `Doc title > Section` | Keeps a FAQ question with its answer; tiny sections don't become near-empty vectors. 73 chunks, avg 387 chars. `npm test` checks bounds and that no text is lost. |
 | **Embeddings** | `nvidia/nemotron-3-embed-1b` (NVIDIA NIM, free), 2048-dim, `input_type` = `passage` at ingest / `query` at search, L2-normalised | Retrieval model; the query/passage distinction matters for recall. |
 | **Vector store** | Supabase pgvector, exact scan (no ANN index), read through a `match_chunks` SQL function; **plus** `data/index.json` as an automatic fallback | The team runs Postgres + pgvector. At ~75 rows an index would only add recall risk. Supabase's free tier pauses idle projects, so the JSON snapshot keeps the site answering if it's asleep. |
-| **LLM** | A **hedged race** across five free NVIDIA NIM chat models (`mistral-nemotron`, `nemotron-3-ultra`, `glm-5.3-flash`, `kimi-k3`, `nemotron-3.5-lightning`), temperature 0, streamed, thinking switched off. The best-recent model starts first; if it hasn't produced a token in 4 s (or fails) the next starts *in parallel*; first token wins, the rest are cancelled. 32 s total budget, then a friendly "busy, try again" message. **Reserve providers** — Gemini `2.5-flash`, Mistral `small`, OpenRouter (`:free` models only) — are queued behind the NVIDIA models, tried once each, and capped at 20 requests/hour per server instance so their small free quotas last. Identical questions are cached in memory. | Any single free endpoint stalls or 429s regularly (I measured it), and waiting for dead models one after another is what leaves a visitor on a spinner. |
+| **LLM** | A **hedged race** across five free NVIDIA NIM chat models (`mistral-nemotron`, `nemotron-3-ultra`, `glm-5.3-flash`, `kimi-k3`, `nemotron-3.5-lightning`), temperature 0, streamed, thinking switched off. The best-recent model starts first; if it hasn't produced a token in 4 s (or fails) the next starts *in parallel*; first token wins, the rest are cancelled. 32 s total budget, then a friendly "busy, try again" message. **Reserve providers** — Groq `gpt-oss-120b`, Gemini `2.5-flash`, Mistral `small`, OpenRouter (`:free` models only) — are queued behind the NVIDIA models, tried once each, and capped at 20 requests/hour per server instance so their small free quotas last. Identical questions are cached in memory. | Any single free endpoint stalls or 429s regularly (I measured it), and waiting for dead models one after another is what leaves a visitor on a spinner. |
 | **Grounded refusal** | Four layers (below) | The behaviour the brief weights most. |
 
 ### Grounded refusal
@@ -110,7 +110,7 @@ where the LLM was unavailable counts as a **failure**, so an outage can never ma
 1. Push the repo; import it in Vercel (framework: Next.js, no build overrides).
 2. Environment variables (Production): `NVIDIA_API_KEY`, `SUPABASE_URL`, `SUPABASE_KEY` (the publishable key), and the
    optional per-model keys `NVIDIA_API_KEY_ULTRA` / `_GLM` / `_KIMI` / `_LIGHTNING` (each falls back to `NVIDIA_API_KEY`).
-   Reserve providers: `GEMINI_API_KEY`, `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`.
+   Reserve providers: `GROQ_API_KEY`, `GEMINI_API_KEY`, `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`.
    Optionally `NEXT_PUBLIC_LINKEDIN_URL` / `NEXT_PUBLIC_GITHUB_URL` / `NEXT_PUBLIC_CONTACT_EMAIL` (set these *before*
    the build — `NEXT_PUBLIC_*` values are baked in at build time) and the `FALLBACK_LLM_*` trio.
    **Do not** set `DATABASE_URL` on Vercel — it is only for local ingestion.
@@ -132,10 +132,11 @@ where the LLM was unavailable counts as a **failure**, so an outage can never ma
   and `kimi-k3` returned nothing within 75 s in my tests (they stay in the race as late hedges, and are skipped for 90 s
   after a failure); `nemotron-3.5-lightning` is fast when it works but the weakest instruction-follower, which is why
   refusals are enforced in code. Everything is on one NVIDIA account, so a shared rate limit can still hit all of them.
-  Behind the race: the reserve providers (Gemini, Mistral, OpenRouter free tier), then a friendly "busy, try again"
-  message with a retry button. I checked each reserve with a single request: Gemini answered in 1.3 s; Mistral and
-  OpenRouter both returned HTTP 429 (rate limit / upstream congestion) — so only Gemini is *proven* to answer. The
-  reserve path has been tested by unit reasoning and a wiring check, not by a live NVIDIA outage. An earlier fallback that quoted raw passages was removed: safe,
+  Behind the race: the reserve providers (Groq, Gemini, Mistral, OpenRouter free tier), then a friendly "busy, try
+  again" message with a retry button. I checked each reserve with a single request: Groq answered in 0.5 s and Gemini
+  in 1.3 s; Mistral (two different keys) and OpenRouter returned HTTP 429 (rate limit / upstream congestion) — so only
+  Groq and Gemini are *proven* to answer. The reserve path has had wiring checks and a real hedged-race run, but I never
+  saw a live outage that forced a reserve to win. An earlier fallback that quoted raw passages was removed: safe,
   but irrelevant and confusing.
 - **Flat similarity scores.** `nemotron-3-embed-1b` separates in-scope from off-topic questions well (0.32+ vs 0.02) but
   ranks vague phrasings loosely, hence top-k 10. I'd add a reranker (NVIDIA has free ones) or hybrid BM25 + vector next.
