@@ -1,6 +1,16 @@
 import { ChatWidget } from "@/components/ChatWidget";
 import { ArrowUpRightIcon, CheckIcon, GitHubIcon, LinkedInIcon, MailIcon, PlayIcon } from "@/components/icons";
+import { MobileMenu } from "@/components/MobileMenu";
 import { education, experience, featuredProjects, liveApps, site, skills, stats } from "@/lib/site";
+
+// The last entry (Contact) is styled as a pill in the desktop header, so keep it last.
+const navLinks = [
+  { href: "#projects", label: "Projects" },
+  { href: "#apps", label: "Apps" },
+  { href: "#experience", label: "Experience" },
+  { href: "#skills", label: "Skills" },
+  { href: "#contact", label: "Contact" },
+];
 
 const Section = ({ id, eyebrow, title, children }: { id: string; eyebrow: string; title: string; children: React.ReactNode }) => (
   <section id={id} className="scroll-mt-20 py-12 sm:py-16">
@@ -30,12 +40,15 @@ export default function Home() {
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-linear-to-br from-brand to-brand-2 text-xs font-bold text-white">HS</span>
             {site.name}
           </a>
-          <div className="flex items-center gap-1 text-muted sm:gap-5">
-            <a href="#projects" className="hidden hover:text-ink sm:inline">Projects</a>
-            <a href="#apps" className="hidden hover:text-ink sm:inline">Apps</a>
-            <a href="#experience" className="hidden hover:text-ink sm:inline">Experience</a>
+          <div className="hidden items-center gap-5 text-muted sm:flex">
+            {navLinks.slice(0, -1).map((l) => (
+              <a key={l.href} href={l.href} className="hover:text-ink">
+                {l.label}
+              </a>
+            ))}
             <a href="#contact" className="rounded-full border border-line px-3 py-1.5 font-medium text-ink hover:border-brand">Contact</a>
           </div>
+          <MobileMenu links={navLinks} />
         </nav>
       </header>
 
@@ -200,7 +213,7 @@ export default function Home() {
             <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10" />
             <h2 className="relative text-2xl font-bold tracking-tight sm:text-3xl">Get in touch</h2>
             <p className="relative mt-2 max-w-xl text-white/85">
-              Got a question about {site.firstName}&apos;s work? Ask the assistant in the corner, or reach out directly.
+              Got a question about my work? Ask the assistant in the corner, or reach out directly.
             </p>
             <ul className="relative mt-6 flex flex-wrap gap-3">
               {social.map(({ label, href, Icon }) => (
@@ -218,7 +231,7 @@ export default function Home() {
               ))}
             </ul>
           </div>
-          <p className="mt-6 text-center text-xs text-muted">Built with Next.js, Supabase pgvector and NVIDIA NIM. The assistant answers only from Hassam&apos;s own documents.</p>
+          <p className="mt-6 text-center text-xs text-muted">Built with Next.js, Supabase pgvector and NVIDIA NIM. The assistant answers only from my own documents.</p>
         </section>
       </main>
 

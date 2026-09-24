@@ -1,13 +1,13 @@
-// Page copy. Every fact here is taken from the corpus in /corpus (the CV-derived dataset) — nothing added.
-// Contact links come from env vars and are only rendered when set, so nothing private is published by default.
+// Page copy, written in Hassam's own voice. Every fact here is taken from the corpus in /corpus (the CV-derived
+// dataset) or supplied by Hassam himself (contact and store links) — nothing else added.
 
 export const site = {
   name: "Hassam Saleem",
   firstName: "Hassam",
   title: "Software Engineer",
-  tagline: "Flutter mobile apps, MERN web apps, and AI-enabled features — speech, translation and real-time calling.",
+  tagline: "I build production Flutter apps and MERN web apps, and add AI features like speech, translation and real-time calling.",
   summary:
-    "Hassam Saleem is a Software Engineer specializing in Flutter and Dart, with additional experience in MERN-stack web development and AI-enabled application features. His CV describes 2+ years of experience in Flutter mobile development and MERN development.",
+    "I'm a Software Engineer with 2+ years of experience in Flutter and MERN-stack development. I specialize in cross-platform mobile apps backed by Firebase and REST APIs, and I take them all the way to Google Play and the App Store. At NTIS I worked on AI-enabled features: real-time calling and call translation with WebRTC, plus speech-to-text, text-to-speech and ElevenLabs Agents.",
   links: {
     // Public by Hassam's choice. Defaults live here so a missing env var on Vercel can't blank the contact section.
     linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://www.linkedin.com/in/hassam-saleem-b047b92a6",
@@ -50,7 +50,7 @@ export const featuredProjects = [
     name: "AI-NTIS",
     kind: "AI-enabled Flutter app · real-time calling & translation",
     blurb:
-      "An AI-enabled mobile application built in the NTIS environment. Hassam worked on its mobile implementation and on the real-time communication and voice/translation functionality.",
+      "An AI-enabled mobile application built in the NTIS environment. I worked on its mobile implementation and on the real-time communication and voice/translation functionality.",
     highlights: [
       "WebRTC (flutter_webrtc) for real-time calling and real-time call translation, including ICE candidate handling and buffering of pending ICE candidates.",
       "Speech-to-text, text-to-speech, audio recording/playback and ElevenLabs Agents for the voice workflow.",
@@ -64,7 +64,7 @@ export const featuredProjects = [
     name: "NTIS Pro",
     kind: "Production Flutter app · Firebase backend",
     blurb:
-      "A production Flutter application in the NTIS environment. Hassam worked on its mobile development and production fixes — maintaining and extending an existing production app rather than a demo.",
+      "A production Flutter application in the NTIS environment. I worked on its mobile development and production fixes — maintaining and extending an existing production app rather than a demo.",
     highlights: [
       "Bookings, interpreting services, maps, a travel mode, invoices and administrative workflows.",
       "Invoice preview and invoice amount calculation, password reset, booking/team queries.",
@@ -93,13 +93,13 @@ export const liveApps = [
     name: "QR Scanner Kit",
     url: "https://play.google.com/store/apps/details?id=com.qrscannerkit&hl=en",
     downloads: "10K+",
-    blurb: "A QR scanning app from Hassam's published mobile portfolio.",
+    blurb: "A QR scanning app from my published mobile portfolio.",
   },
   {
     name: "Screen Mirroring",
     url: "https://play.google.com/store/apps/details?id=com.nsb.screen_mirroring&hl=en",
     downloads: "10K+",
-    blurb: "A screen mirroring app from Hassam's published mobile portfolio.",
+    blurb: "A screen mirroring app from my published mobile portfolio.",
   },
 ];
 
